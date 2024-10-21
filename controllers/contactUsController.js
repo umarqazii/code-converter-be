@@ -25,7 +25,7 @@ const createMessage = async (req, res) => {
 
     const mailOptions = {
       from: 'umarqazii983@gmail.com',
-      to: 'i200968@nu.edu.pk',
+      to: 'umarqazii983@gmail.com',
       subject: 'Code Converter Contact Us',
       text: Message,
     };
