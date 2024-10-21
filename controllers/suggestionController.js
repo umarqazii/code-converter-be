@@ -25,7 +25,7 @@ const createSuggestion = async (req, res) => {  // Mark function as async
 
     const mailOptions = {
       from: 'umarqazii983@gmail.com',
-      to: 'i200968@nu.edu.pk',
+      to: 'itsmohsinali5@gmail.com',
       subject: 'Code Converter Suggestion',
       text: Message,
     };

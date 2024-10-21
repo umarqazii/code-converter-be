@@ -26,7 +26,7 @@ const createIssueReport = async (req, res) =>  {
 
     const mailOptions = {
       from: 'umarqazii983@gmail.com',
-      to: 'i200968@nu.edu.pk',
+      to: 'itsmohsinali5@gmail.com',
       subject: 'Code Converter Issue Report',
       text: Message,
     };
