@@ -1,10 +1,9 @@
-// Import necessary modules
-const fs = require('fs');
-const path = require('path');
-const { parse } = require('json2csv');
+const nodemailer = require('nodemailer');
+const axios = require('axios');
+const dotenv = require('dotenv').config();
 
 // Controller function to handle issue report creation
-const createIssueReport = (req, res) => {
+const createIssueReport = async (req, res) =>  {
   const { name, email, issue } = req.body;
 
   // Validate the input
@@ -12,39 +11,38 @@ const createIssueReport = (req, res) => {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
-  // Define the issue report data
-  const newIssue = { name, email, issue };
-
-  // Define the CSV file path for issue reports
-  const csvFilePath = path.join(__dirname, '../data/issues.csv');
-
-  // Check if the CSV file exists
-  const csvExists = fs.existsSync(csvFilePath);
-
-  // If the CSV file doesn't exist, create headers
-  const fields = ['name', 'email', 'issue'];
-  const opts = { fields, header: !csvExists };
-
   try {
-    // Convert issue report data to CSV format
-    const csv = parse(newIssue, opts);
+    console.log(email);
 
-    // Append the CSV data to the file
-    fs.appendFileSync(csvFilePath, csv + '\n', 'utf8');
-
-    // Print the issue report data to the console
-    console.log('New Issue Report:', newIssue);
-
-    // Send back a success response
-    return res.status(201).json({
-      message: 'Issue reported successfully',
-      data: newIssue,
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'umarqazii983@gmail.com',
+        pass: process.env.gmail_pass,  // Ensure you have this variable in your .env file
+      },
     });
-  } catch (error) {
-    console.error('Error saving issue report to CSV:', error.message);
-    console.error(error.stack);
-    return res.status(500).json({
-      error: 'Failed to save issue report',
+
+    const Message = `Suggestion submitted by: ${name}\n\nEmail of user: ${email}\n\nSuggestion: ${issue}`;
+
+    const mailOptions = {
+      from: 'umarqazii983@gmail.com',
+      to: 'i200968@nu.edu.pk',
+      subject: 'Code Converter Issue Report',
+      text: Message,
+    };
+
+    const info = await transporter.sendMail(mailOptions);  // await here requires async function
+
+    res.status(200).json({
+      message: 'Email sent successfully!',
+      info: info.response,
+    });
+  } catch (err) {
+    console.error('Error sending email:', err);
+
+    res.status(500).json({
+      message: 'Failed to send email',
+      error: err.message,
     });
   }
 };
